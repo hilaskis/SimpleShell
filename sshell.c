@@ -15,6 +15,8 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <errno.h>
+#include <sys/time.h>
+#include <sys/resource.h>
 #include "sshell.h"
 
 /*
@@ -90,6 +92,7 @@ int exec_cmd(char** argv)
       printf("Error executing command: %s\n", strerror(errno));
       exit(1);
     }
+
   }
   else      // Parent waits for the child to finish
   {

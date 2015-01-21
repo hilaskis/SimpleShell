@@ -10,6 +10,8 @@
  */
 
 #include <stdio.h>
+#include <sys/time.h>
+#include <sys/resource.h>
 #include "sshell.h"
 
 #define INPUT_SIZE 255
@@ -20,7 +22,9 @@ int main(void)
   char input[INPUT_SIZE];
   char * argv[MAX_ARGS];
   int status = 0;
-
+  struct rusage usage;
+  struct timeval start, end;
+  long s_con, e_con;
   // Display a welcome message for the shell
   print_shell_str();
   printf("Running simple shell: type \"quit\" to exit.\n");
@@ -38,9 +42,22 @@ int main(void)
     {
       break;
     }
-    else      // Execute the command
+    else
     {
+      // Get the start user time and context switch value for child process(es)
+      getrusage(RUSAGE_CHILDREN, &usage);
+      start = usage.ru_utime;
+      s_con = usage.ru_nivcsw;
+      // Execute the command
       exec_cmd(argv);
+      // Get the end user time and context switch value for child process(es)
+      getrusage(RUSAGE_CHILDREN, &usage);
+      end = usage.ru_utime;
+      e_con = usage.ru_nivcsw;
+      // Print the timing results to the terminal
+      printf("User CPU time: %ld.%06lds\n", end.tv_sec - start.tv_sec,
+        end.tv_usec - start.tv_usec);
+      printf("Involuntary context switches: %ld\n", e_con - s_con);
     }
   }
 

@@ -12,7 +12,7 @@
 #define SSHELL_H
 
   // String used as the shell prompt string.
-  #define SHELL_STR "$ "
+  #define SHELL_STR "~ "
 
   /*
   * Prints the shell prompt string to the terminal
@@ -38,6 +38,6 @@
   * @ param argv: null-terminated, tokenized string array storing a command
   *               and its arguments, if any.
   */
-  int exec_cmd(char**);
+  int exec_cmd(char** argv);
 
 #endif
